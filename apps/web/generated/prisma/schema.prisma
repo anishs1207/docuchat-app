@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id @default(uuid())
+  email String @unique
+
+  bins Bin[] // One-to-many relationship (1 user → many bins)
+}
+
+model Bin {
+  id          String @id @default(uuid())
+  name        String
+  color       String
+  numOfSpaces Int
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  spaces Space[] // One-to-many relationship (1 bin → many spaces)
+}
+
+model Space {
+  spaceId   String @id @default(uuid())
+  spaceName String
+  lastUsed  String
+
+  binId String
+  bin   Bin    @relation(fields: [binId], references: [id])
+
+  conversations Chat[] // One-to-many relationship (1 space → many chats)
+}
+
+model Chat {
+  id                     String     @id @default(uuid())
+  writtenBy              ChatAuthor
+  messageContent         String
+  writtenAtTime          String
+  documentAssociatedName String[]
+
+  spaceId String
+  space   Space  @relation(fields: [spaceId], references: [spaceId])
+}
+
+enum ChatAuthor {
+  ai
+  user
+}

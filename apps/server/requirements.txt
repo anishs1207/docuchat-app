@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+python-multipart
+PyPDF2
+openai
+chromadb
+sentence-transformers
+python-dotenv
+langchain
+langchain-google-genai
+langchain-community
+beautifulsoup4
+langchain_text_splitters
+langchain_google_genai
+python-docx
