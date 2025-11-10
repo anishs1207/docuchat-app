@@ -338,7 +338,7 @@ export default function ChatInterface({
                 </div>
             </div>
 
-            <div className="w-full flex justify-center py-6">
+            {/* <div className="w-full flex justify-center py-6">
                 {status === "authenticated" ? (
                     <div className="flex items-center gap-6">
                         <span className="flex items-center gap-4 px-6 py-3 rounded-lg bg-blue-100 text-blue-800 font-medium shadow-sm">
@@ -367,7 +367,7 @@ export default function ChatInterface({
                         {status === "loading" ? "Connecting..." : "Connect your Gmail Account"}
                     </button>
                 )}
-            </div>
+            </div> */}
 
 
 
