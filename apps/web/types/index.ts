@@ -30,7 +30,7 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
-  plan: 'free' | 'pro' | 'enterprise';
+  plan: "free" | "pro" | "enterprise";
 }
 
 export interface ChatState {
@@ -77,20 +77,17 @@ export type Bin = {
 };
 
 export type Space = {
-    spaceId: string;
-    spaceName: string;
-    binId: string;
-    lastUsedNumOfDays: number;
-    conversations: Chat[]
-    // the chats which are made btw the user and the 
-    // if 1 day ago, 2 dayo ago vs 7 days algo etc
-}
+  spaceId: string;
+  spaceName: string;
+  binId: string;
+  lastUsedNumOfDays: number;
+  conversations: Chat[];
+};
 
 export type Chat = {
-    id: string;
-    writtenBy: 'ai' | 'user';
-    messageContent: string;
-    writtenAtTime: string;
-    documentAssociatedName?: string[];
-}
-
+  id: string;
+  writtenBy: "ai" | "user";
+  messageContent: string;
+  writtenAtTime: string;
+  documentAssociatedName?: string[];
+};

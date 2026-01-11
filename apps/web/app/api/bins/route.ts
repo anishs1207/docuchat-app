@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/db"; // adjust path if needed
+import prisma from "@/lib/db";
 
 // GET /bins (based on userId), bins, spaces and chats for a user
 export async function GET(req: NextRequest) {
   try {
     const userId = req.headers.get("userId");
-    
-  
+
     if (!userId) {
       return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
     }
@@ -15,18 +14,18 @@ export async function GET(req: NextRequest) {
 
     const bins = await prisma.bin.findMany({
       where: {
-        userId: userId, 
+        userId: userId,
       },
       orderBy: {
         name: "asc",
       },
-     include: {
-      spaces: {
-        include: {
-          conversations: true,
+      include: {
+        spaces: {
+          include: {
+            conversations: true,
+          },
+        },
       },
-    },
-  },
     });
 
     return NextResponse.json(bins);
@@ -45,13 +44,16 @@ export async function POST(req: NextRequest) {
     const userId = req.headers.get("user-id");
 
     if (!userId) {
-      return NextResponse.json({error: "Missing userId"}, {status: 400})
+      return NextResponse.json({ error: "Missing userId" }, { status: 400 });
     }
 
     const { binName, color } = await req.json();
 
     if (!binName || !color) {
-      return NextResponse.json({ error: "Missing binName or color" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing binName or color" },
+        { status: 400 }
+      );
     }
 
     const newBin = await prisma.bin.create({
@@ -63,10 +65,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({data: newBin, message: "New Bin is created successfully"}, {status: 200});
+    return NextResponse.json(
+      { data: newBin, message: "New Bin is created successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("POST /api/bins error:", error);
-    return NextResponse.json({ error: "Failed to create bin" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create bin" },
+      { status: 500 }
+    );
   }
 }
 
@@ -79,7 +87,6 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Missing binId" }, { status: 400 });
     }
 
-    // Step 1: Find all spaceIds for the bin
     const spaces = await prisma.space.findMany({
       where: { binId },
       select: { spaceId: true },
@@ -87,7 +94,6 @@ export async function DELETE(req: NextRequest) {
 
     const spaceIds = spaces.map((space) => space.spaceId);
 
-    // Step 2: Delete all chats associated with those spaces
     await prisma.chat.deleteMany({
       where: {
         spaceId: {
@@ -96,24 +102,27 @@ export async function DELETE(req: NextRequest) {
       },
     });
 
-    // Step 3: Delete all spaces associated with the bin
     await prisma.space.deleteMany({
       where: {
         binId,
       },
     });
 
-    // Step 4: Delete the bin itself
     await prisma.bin.delete({
       where: {
         id: binId,
       },
     });
 
-    return NextResponse.json({ message: "Bin, its spaces, and chats deleted successfully." });
+    return NextResponse.json({
+      message: "Bin, its spaces, and chats deleted successfully.",
+    });
   } catch (error) {
     console.error("Error deleting bin and associated data:", error);
-    return NextResponse.json({ error: "Failed to delete bin and associated data" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to delete bin and associated data" },
+      { status: 500 }
+    );
   }
 }
 
@@ -125,7 +134,10 @@ export async function PATCH(req: NextRequest) {
     const { newName } = body;
 
     if (!binId || !newName) {
-      return NextResponse.json({ error: "Missing binId or newName" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing binId or newName" },
+        { status: 400 }
+      );
     }
 
     const updatedBin = await prisma.bin.update({
@@ -133,9 +145,15 @@ export async function PATCH(req: NextRequest) {
       data: { name: newName },
     });
 
-    return NextResponse.json({data: updatedBin, message: "Bins Renamed Successfully"}, {status: 200});
+    return NextResponse.json(
+      { data: updatedBin, message: "Bins Renamed Successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("PATCH /api/bins error:", error);
-    return NextResponse.json({ error: "Failed to update bin name" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update bin name" },
+      { status: 500 }
+    );
   }
 }

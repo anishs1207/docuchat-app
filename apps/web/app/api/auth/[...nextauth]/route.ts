@@ -49,15 +49,14 @@ const handler = NextAuth({
         params: {
           scope:
             "openid email profile https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send",
-          access_type: "offline", // Crucial for getting a refresh token
-          prompt: "consent", // Forces the consent screen to be shown on first login
+          access_type: "offline",
+          prompt: "consent",
         },
       },
     }),
   ],
   callbacks: {
     async jwt({ token, account }) {
-      // Persist the OAuth and refresh token to the JWT right after sign-in
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
@@ -65,12 +64,10 @@ const handler = NextAuth({
         return token;
       }
 
-      // Return previous token if the access token has not expired yet
       if (Date.now() < token.accessTokenExpires) {
         return token;
       }
 
-      // Access token has expired, try to update it
       return refreshAccessToken(token);
     },
     async session({ session, token }) {

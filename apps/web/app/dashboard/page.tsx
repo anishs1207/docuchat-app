@@ -9,9 +9,6 @@ import { Document, User, Bin, Chat } from "@/types";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from 'uuid';
 
-//@bigtood: once return => also set isTyping to false (to end the conversations taken palce here)
-//@bigtood: error are coming in some routes here
-
 const mockUser: User = {
     id: "1",
     name: "Anish Sabharwal",
@@ -193,9 +190,6 @@ export default function Dashboard() {
             }))
         );
 
-        // no need to show that it is added for ui 
-
-        //@user message is sent to the backend
         try {
             const response = await axios.post('/api/chats', {
                 writtenBy: 'user',
@@ -229,7 +223,6 @@ export default function Dashboard() {
         } catch (error) {
             console.error("Error /handleSendMessage, Error adding user message", error);
 
-            // Rollback here:
             toast.error("Failed to send message");
             setBins(prev =>
                 prev.map(bin => ({
@@ -249,7 +242,6 @@ export default function Dashboard() {
 
         let aiResponse;
 
-        //@ai message is generated from llms
         try {
             const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
@@ -273,7 +265,6 @@ export default function Dashboard() {
             });
 
             aiResponse = responseAI.data.answer.context || responseAI.data.answer;
-            // @todo-check
 
             if (!aiResponse) {
                 throw new Error("Error getting response from the llm")
@@ -312,7 +303,6 @@ export default function Dashboard() {
             }))
         );
 
-        //@ai message sent to the backend
         try {
             const responseOnAIMessageAdd = await axios.post('/api/chats', {
                 writtenBy: 'ai',
@@ -346,7 +336,6 @@ export default function Dashboard() {
         } catch (error) {
             console.error("Chat API error:", error);
 
-            // Rollback AI message
             toast.error("Failed to get AI response");
 
             setBins(prev =>
@@ -392,7 +381,6 @@ todo add:
         window.location.reload();
     };
 
-    //@checked: (todo add qeue here)
     const handleAddBin = async (newBinName: string, newBinColor: string) => {
         if (!userId || !newBinName || !newBinColor) {
             console.error("Missing user ID");

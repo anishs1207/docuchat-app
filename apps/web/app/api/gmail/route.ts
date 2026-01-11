@@ -5,7 +5,6 @@ import { DynamicTool } from "langchain/tools";
 import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
-// Helper for Gmail's URL-safe base64 encoding
 function base64Encode(str: string) {
   return Buffer.from(str)
     .toString("base64")
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
     if (!query || !accessToken) {
       return NextResponse.json(
         { error: "query and accessToken are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -35,7 +34,7 @@ export async function POST(req: NextRequest) {
       console.error("GOOGLE_API_KEY environment variable is not set");
       return NextResponse.json(
         { error: "Server configuration error: Missing API key" },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
@@ -43,7 +42,7 @@ export async function POST(req: NextRequest) {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      process.env.GOOGLE_REDIRECT_URI,
+      process.env.GOOGLE_REDIRECT_URI
     );
 
     oauth2Client.setCredentials({ access_token: accessToken });
@@ -57,7 +56,7 @@ export async function POST(req: NextRequest) {
       console.error("Gmail authentication failed:", authError);
       return NextResponse.json(
         { error: "Invalid or expired access token" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -114,7 +113,7 @@ export async function POST(req: NextRequest) {
               } catch (msgError) {
                 return { id: msg.id, error: "Failed to fetch message details" };
               }
-            }),
+            })
           );
 
           return JSON.stringify({ count: detailed.length, emails: detailed });
@@ -152,12 +151,11 @@ export async function POST(req: NextRequest) {
           return JSON.stringify({
             needsMoreInfo: true,
             message: `Missing fields: ${missingFields.join(
-              ", ",
+              ", "
             )}. Please provide them to send the email.`,
           });
         }
 
-        // All info is present, proceed to send email
         try {
           const emailContent = [
             `To: ${data.recipient}`,
@@ -289,7 +287,7 @@ export async function POST(req: NextRequest) {
     const result = await Promise.race([
       executor.invoke({ input: query }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Agent execution timeout")), 60000),
+        setTimeout(() => reject(new Error("Agent execution timeout")), 60000)
       ),
     ]);
 
@@ -311,7 +309,7 @@ export async function POST(req: NextRequest) {
             ? (err as Error).stack
             : undefined,
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     if (!lastUsedDate) {
       return NextResponse.json(
         { error: "Missing lastUsedDate attribute" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -38,13 +38,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { data: { space, chat }, message: "New Space is Created" },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error) {
     console.error("POST /api/spaces", error);
     return NextResponse.json(
       { error: "Failed to create space" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -58,7 +58,7 @@ export async function PATCH(req: NextRequest) {
     if (!spaceId || !newSpaceName) {
       return NextResponse.json(
         { error: "Missing spaceId or spaceName" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -69,13 +69,13 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json(
       { data: updated, message: "Space is renamed" },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error) {
     console.error("PATCH /api/spaces", error);
     return NextResponse.json(
       { error: "Failed to rename space" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -89,12 +89,10 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Missing spaceId" }, { status: 400 });
     }
 
-    // Step 1: Delete all conversations (chats) related to the space
     await prisma.chat.deleteMany({
       where: { spaceId },
     });
 
-    // Step 2: Delete the space itself
     await prisma.space.delete({
       where: { spaceId },
     });
@@ -106,7 +104,7 @@ export async function DELETE(req: NextRequest) {
     console.error("DELETE /api/spaces", error);
     return NextResponse.json(
       { error: "Failed to delete space and conversations" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

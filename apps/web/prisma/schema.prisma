@@ -12,7 +12,7 @@ model User {
   id    String @id @default(uuid())
   email String @unique
 
-  bins Bin[] // One-to-many relationship (1 user → many bins)
+  bins Bin[]
 }
 
 model Bin {
@@ -24,7 +24,7 @@ model Bin {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  spaces Space[] // One-to-many relationship (1 bin → many spaces)
+  spaces Space[]
 }
 
 model Space {
@@ -35,7 +35,7 @@ model Space {
   binId String
   bin   Bin    @relation(fields: [binId], references: [id])
 
-  conversations Chat[] // One-to-many relationship (1 space → many chats)
+  conversations Chat[]
 }
 
 model Chat {
